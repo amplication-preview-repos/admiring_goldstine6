@@ -1,0 +1,112 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Kpi {
+  createdAt         DateTime         @default(now())
+  employeeProfile   EmployeeProfile? @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  id                String           @id @default(cuid())
+  kpiName           String?
+  targetValue       Float?
+  updatedAt         DateTime         @updatedAt
+  value             Float?
+}
+
+model Goal {
+  createdAt         DateTime         @default(now())
+  deadline          DateTime?
+  description       String?
+  employeeProfile   EmployeeProfile? @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  id                String           @id @default(cuid())
+  milestone         String?
+  status            EnumGoalStatus?
+  updatedAt         DateTime         @updatedAt
+}
+
+model FeedbackNote {
+  content           String?
+  createdAt         DateTime         @default(now())
+  employeeProfile   EmployeeProfile? @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  feedbackDate      DateTime?
+  id                String           @id @default(cuid())
+  updatedAt         DateTime         @updatedAt
+}
+
+model EmployeeProfile {
+  createdAt          DateTime            @default(now())
+  department         String?
+  feedbackNotes      FeedbackNote[]
+  goals              Goal[]
+  id                 String              @id @default(cuid())
+  jobRole            String?
+  kpis               Kpi[]
+  name               String?
+  performanceReviews PerformanceReview[]
+  reports            Report[]
+  tasks              Task[]
+  updatedAt          DateTime            @updatedAt
+}
+
+model PerformanceReview {
+  createdAt         DateTime         @default(now())
+  employeeProfile   EmployeeProfile? @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  id                String           @id @default(cuid())
+  managerFeedback   String?
+  overallRating     Float?
+  reviewDate        DateTime?
+  selfAssessment    String?
+  updatedAt         DateTime         @updatedAt
+}
+
+model Report {
+  content           String?
+  createdAt         DateTime         @default(now())
+  employeeProfile   EmployeeProfile? @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  generatedDate     DateTime?
+  id                String           @id @default(cuid())
+  title             String?
+  updatedAt         DateTime         @updatedAt
+}
+
+model Task {
+  completionStatus  EnumTaskCompletionStatus?
+  createdAt         DateTime                  @default(now())
+  description       String?
+  dueDate           DateTime?
+  employeeProfile   EmployeeProfile?          @relation(fields: [employeeProfileId], references: [id])
+  employeeProfileId String?
+  id                String                    @id @default(cuid())
+  project           String?
+  taskName          String?
+  updatedAt         DateTime                  @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumGoalStatus {
+  Option1
+}
+
+enum EnumTaskCompletionStatus {
+  Option1
+}
